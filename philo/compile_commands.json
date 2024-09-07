@@ -1,0 +1,34 @@
+[
+ {
+  "directory": "/home/lemercie/projects/philos/repo/philo",
+  "arguments": [
+   "cc",
+   "-g",
+   "-Wextra",
+   "-Wall",
+   "-Werror",
+   "-pthread",
+   "-o",
+   "philo.o",
+   "-c",
+   "philo.c"
+  ],
+  "file": "philo.c"
+ },
+ {
+  "directory": "/home/lemercie/projects/philos/repo/philo",
+  "arguments": [
+   "cc",
+   "-g",
+   "-Wextra",
+   "-Wall",
+   "-Werror",
+   "-pthread",
+   "-o",
+   "ft_atoi.o",
+   "-c",
+   "ft_atoi.c"
+  ],
+  "file": "ft_atoi.c"
+ }
+]
