@@ -6,12 +6,13 @@
 /*   By: lemercie <lemercie@student.hive.fi>        +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/09/07 12:45:05 by lemercie          #+#    #+#             */
-/*   Updated: 2024/09/07 12:51:49 by lemercie         ###   ########.fr       */
+/*   Updated: 2024/09/07 13:14:32 by lemercie         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "philo.h"
 
+// this bad boy doesn't do any error checking
 int	ft_atoi(char *s)
 {
 	int	num;
