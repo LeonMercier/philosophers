@@ -6,7 +6,7 @@
 /*   By: lemercie <lemercie@student.hive.fi>        +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/09/07 11:40:55 by lemercie          #+#    #+#             */
-/*   Updated: 2024/09/09 16:56:47 by leon             ###   ########.fr       */
+/*   Updated: 2024/09/09 18:01:13 by leon             ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -36,5 +36,8 @@ typedef struct s_philo
 	pthread_mutex_t	*forks;
 }	t_philo;
 
+// init.c
+int init(t_settings *settings);
+// ft_atoi.c
 int	ft_atoi(char *s);
 #endif
