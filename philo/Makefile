@@ -6,7 +6,7 @@
 #    By: lemercie <lemercie@student.hive.fi>        +#+  +:+       +#+         #
 #                                                 +#+#+#+#+#+   +#+            #
 #    Created: 2024/07/01 11:56:58 by lemercie          #+#    #+#              #
-#    Updated: 2024/09/09 17:48:38 by leon             ###   ########.fr        #
+#    Updated: 2024/09/10 12:03:42 by leon             ###   ########.fr        #
 #                                                                              #
 # **************************************************************************** #
 
@@ -22,7 +22,7 @@ all: $(NAME)
 %.o: %.c
 	$(CC) $(CFLAGS) -o $@ -c $<
 
-$(NAME): $(OBJS)
+$(NAME): $(OBJS) philo.h
 	$(CC) $(OBJS) -o $(NAME)
 
 clean:

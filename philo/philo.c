@@ -6,17 +6,45 @@
 /*   By: lemercie <lemercie@student.hive.fi>        +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/09/07 12:22:58 by lemercie          #+#    #+#             */
-/*   Updated: 2024/09/09 17:51:13 by leon             ###   ########.fr       */
+/*   Updated: 2024/09/10 12:15:34 by leon             ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "philo.h"
-#include <pthread.h>
-#include <stdio.h>
 
+long long	get_cur_time_ms()
+{
+	struct timeval	time;
+
+	if (gettimeofday(&time, NULL) == -1)
+		return (-1);
+	return ((time.tv_sec * 1000) + (time.tv_usec / 1000));
+}
+
+// philo.alive protect by mutex
 void	*philo_routine(void *arg)
 {
-	printf("I am philosopher %i\n", ((t_philo *) arg)->id);
+	t_philo	*philo;
+
+	philo = (t_philo *) arg;
+	printf("I am philosopher %i\n", philo->id);
+	while (philo->alive)
+	{
+		if (!philo->eating)
+		{
+			if (philo->started_eating == -1)
+			{
+				if ((get_cur_time_ms() - philo->start_time) > philo->settings->time_to_die)
+					philo->alive = false;
+			}
+			else
+			{
+				if ((get_cur_time_ms() - philo->started_eating) > philo->settings->time_to_die)
+					philo->alive = false;
+			}
+		}		
+	}
+	printf("%lli %i died\n", get_cur_time_ms(), philo->id); // monitor should take care of this
 	return (NULL);
 }
 
