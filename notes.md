@@ -5,3 +5,4 @@
     pthread_create() --> pthread_detach() --> pthread_exit()
     OR pass attribute PTHREAD_CREATE_DETACHED
 * "protect the forks state with a mutex for *each* of them"
+* think -> eat -> sleep -> think

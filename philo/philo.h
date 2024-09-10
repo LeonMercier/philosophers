@@ -6,7 +6,7 @@
 /*   By: lemercie <lemercie@student.hive.fi>        +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/09/07 11:40:55 by lemercie          #+#    #+#             */
-/*   Updated: 2024/09/10 12:04:07 by leon             ###   ########.fr       */
+/*   Updated: 2024/09/10 15:23:56 by leon             ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -21,17 +21,20 @@
 
 typedef struct s_settings
 {
-	int	n_philos;
-	int	time_to_die;
-	int	time_to_eat;
-	int	time_to_sleep;
-	int	n_meals;
+	int				n_philos;
+	int				time_to_die;
+	int				time_to_eat;
+	int				time_to_sleep;
+	int				n_meals;
+	int				dead_philo;
+	long long		start_time;
+	pthread_mutex_t	dead_philo_lock;
+	pthread_mutex_t	print_lock;
 }	t_settings;
 
 typedef struct s_philo
 {
 	int				id;
-	bool			alive;
 	bool			eating;
 	long long		start_time;
 	long long		started_eating;
