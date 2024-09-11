@@ -6,7 +6,7 @@
 /*   By: leon </var/spool/mail/leon>                +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/09/09 17:48:52 by leon              #+#    #+#             */
-/*   Updated: 2024/09/10 14:12:04 by leon             ###   ########.fr       */
+/*   Updated: 2024/09/11 16:23:41 by leon             ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -45,7 +45,6 @@ static t_philo	*allocate_philos(t_settings *settings, pthread_mutex_t *forks)
 		philos[i].start_time = get_cur_time_ms();
 		philos[i].started_eating = -1;
 		philos[i].times_eaten = 0;
-		philos[i].settings = settings;
 		if (i == 0)
 		{
 			philos[i].left = &forks[settings->n_philos - 1];
@@ -80,6 +79,7 @@ int init(t_settings *settings)
 		// forks -> destroy mutexes
 		return (1);
 	}
-	simulate(settings, philos);
+	settings->philos = philos;
+	simulate(settings);
 	return (0);
 }
