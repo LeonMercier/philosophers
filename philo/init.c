@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   init.c                                             :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: leon </var/spool/mail/leon>                +#+  +:+       +#+        */
+/*   By: lemercie <lemercie@student.hive.fi>        +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
-/*   Created: 2024/09/09 17:48:52 by leon              #+#    #+#             */
-/*   Updated: 2024/09/11 16:23:41 by leon             ###   ########.fr       */
+/*   Created: 2024/09/13 11:51:57 by lemercie          #+#    #+#             */
+/*   Updated: 2024/09/13 11:52:07 by lemercie         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -60,6 +60,7 @@ static t_philo	*allocate_philos(t_settings *settings, pthread_mutex_t *forks)
 			philos[i].left = &forks[i - 1];
 			philos[i].right = &forks[i];
 		}
+		philos[i].settings = settings;
 		i++;
 	}
 	return (philos);
@@ -79,7 +80,6 @@ int init(t_settings *settings)
 		// forks -> destroy mutexes
 		return (1);
 	}
-	settings->philos = philos;
-	simulate(settings);
+	simulate(philos);
 	return (0);
 }

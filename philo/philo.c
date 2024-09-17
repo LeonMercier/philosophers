@@ -6,7 +6,7 @@
 /*   By: lemercie <lemercie@student.hive.fi>        +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/09/07 12:22:58 by lemercie          #+#    #+#             */
-/*   Updated: 2024/09/17 13:56:13 by leon             ###   ########.fr       */
+/*   Updated: 2024/09/17 15:05:04 by leon             ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -58,12 +58,13 @@ bool	all_alive(void *arg)
 void	think(t_settings *settings, t_philo *philo)
 {
 	ft_mutex_print(get_cur_time_ms() - settings->start_time, philo->id,
-				"is thinking", &settings->print_lock);
+		"is thinking", &settings->print_lock);
 	usleep(100);
 }
 
 void	eat(t_settings *settings, t_philo *philo)
 {
+	philo->eating = true;
 	ft_mutex_print(get_cur_time_ms() - settings->start_time, philo->id,
 				"is eating", &settings->print_lock);
 	philo->started_eating = get_cur_time_ms();
@@ -71,6 +72,7 @@ void	eat(t_settings *settings, t_philo *philo)
 	philo->times_eaten++;
 	pthread_mutex_unlock(philo->left);
 	pthread_mutex_unlock(philo->right);
+	philo->eating = false;
 }
 
 void	philo_sleep(t_settings *settings, t_philo *philo)
@@ -103,55 +105,57 @@ void	pickup_forks(t_settings *settings, t_philo *philo)
 // Dijkstra style
 // whole pickup sequence is protected by a mutex
 // but only lock that mutex if neither neighbour is eating
-// BUT what if we read neighbour state and then it changes before we attempt to acquire the lock?
+// BUT what if we read neighbour state and then it changes before we attempt to
+// 		acquire the lock?
 //
 // TODO:always die with a single philo
 //
 // suggestion
 // monitor in an infinte loop for time to die of each philo
 // set dead flag on philo
-// philo will check after every lock wait and quit if dead -> no extra messages will be printed even if 
+// philo will check after every lock wait and quit if dead
+// 		-> no extra messages will be printed even if 
 // philo dies while waiting (and death msg is printed immediately)
 void	*philo_routine(void *arg)
 {
 	t_two_ptr	*routine_args;
 	t_philo	*philo;
-	t_settings *settings;
 
 	routine_args = (t_two_ptr *) arg;
 	philo = routine_args->philos;
-	settings = routine_args->settings;
 	while (true)
 	{
-		think(settings, philo);
-		pickup_forks(settings, philo);
-		eat(settings, philo);
-		philo_sleep(settings, philo);
-		if (settings->dead_philo > -1)
+		think(philo->settings, philo);
+		pickup_forks(philo->settings, philo);
+		eat(philo->settings, philo);
+		philo_sleep(philo->settings, philo);
+		if (philo->settings->dead_philo > -1)
 			return (NULL);
-		if (philo->times_eaten == settings->n_meals)
+		if (philo->times_eaten == philo->settings->n_meals)
 			return (NULL);
 	}
 	return (NULL);
 }
 
-bool	check_alive(t_settings *settings)
+bool	check_alive(t_philo *philos)
 {
 	int	i;
 
 	i = 0;
-	while (i < settings->n_philos)
+	while (i < philos->settings->n_philos)
 	{
-		if (settings->philos[i].started_eating == -1)
+		if (philos[i].started_eating == -1)
 		{
-			if ((get_cur_time_ms() - settings->philos[i].start_time) > settings->time_to_die)
-				kill_philo(i, settings);
+			if ((get_cur_time_ms() - philos[i].start_time)
+				> philos->settings->time_to_die)
+				kill_philo(i, philos->settings);
 			return (false);
 		}
 		else
 		{
-			if ((get_cur_time_ms() - settings->philos[i].started_eating) > settings->time_to_die)
-				kill_philo(i, settings);
+			if ((get_cur_time_ms() - philos[i].started_eating)
+				> philos->settings->time_to_die)
+				kill_philo(i, philos->settings);
 			return (false);
 		}
 		i++;
@@ -159,14 +163,14 @@ bool	check_alive(t_settings *settings)
 	return (true);
 }
 
-bool	all_eaten(t_settings *settings)
+bool	all_eaten(t_philo *philos)
 {
 	int	i;
 
 	i = 0;
-	while (i < settings->n_philos)
+	while (i < philos->settings->n_philos)
 	{
-		if (settings->philos[i].times_eaten < settings->n_meals)
+		if (philos[i].times_eaten < philos->settings->n_meals)
 			return (false);
 		i++;
 	}
@@ -175,48 +179,45 @@ bool	all_eaten(t_settings *settings)
 
 void	*monitor_routine(void *arg)
 {
-	t_settings	*settings;
+	t_philo	*philos;
 
-	settings = (t_settings *) arg;
+	philos = (t_philo *) arg;
 	while (true)
 	{
-		if (check_alive(settings) == false)
+		if (check_alive(philos) == false)
 		{
-			ft_mutex_print(get_cur_time_ms() - settings->start_time,
-				  settings->dead_philo, "died", &settings->print_lock);
+			ft_mutex_print(get_cur_time_ms() - philos->settings->start_time,
+				  philos->settings->dead_philo, "died", &philos->settings->print_lock);
 			return (NULL);
 		}
-		if (all_eaten(settings))
+		if (philos->settings->n_meals > -1 && all_eaten(philos))
 		{
 			return (NULL);
 		}
 	}
 }
 
-void	simulate(t_settings *settings)
+void	simulate(t_philo *philos)
 {
 	int			i;
 	pthread_t	*threads;
 	pthread_t	monitor_thd;
-	t_two_ptr	routine_args;
 
-	threads = malloc(sizeof(pthread_t) * settings->n_philos);
+	threads = malloc(sizeof(pthread_t) * philos->settings->n_philos);
 	if (!threads)
 	{
 		// fail malloc
 	}
-	pthread_create(&monitor_thd, NULL, &monitor_routine, settings);
+	pthread_create(&monitor_thd, NULL, &monitor_routine, philos);
 	i = 0;
-	routine_args.settings = settings;
-	while (i < settings->n_philos)
+	while (i < philos->settings->n_philos)
 	{
-		routine_args.philos = &settings->philos[i];
 		pthread_create(&threads[i], NULL, &philo_routine, &routine_args);
 		i++;
 	}
 	pthread_join(monitor_thd, NULL);
 	i = 0;
-	while (i < settings->n_philos)
+	while (i < philos->settings->n_philos)
 	{
 		pthread_join(threads[i], NULL);
 		i++;
