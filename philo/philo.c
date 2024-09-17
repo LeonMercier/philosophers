@@ -6,7 +6,7 @@
 /*   By: lemercie <lemercie@student.hive.fi>        +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/09/07 12:22:58 by lemercie          #+#    #+#             */
-/*   Updated: 2024/09/11 17:11:21 by leon             ###   ########.fr       */
+/*   Updated: 2024/09/17 13:56:13 by leon             ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -114,11 +114,13 @@ void	pickup_forks(t_settings *settings, t_philo *philo)
 // philo dies while waiting (and death msg is printed immediately)
 void	*philo_routine(void *arg)
 {
+	t_two_ptr	*routine_args;
 	t_philo	*philo;
 	t_settings *settings;
 
-	philo = (t_philo *) *arg;
-	settings = (t_settings *) arg;
+	routine_args = (t_two_ptr *) arg;
+	philo = routine_args->philos;
+	settings = routine_args->settings;
 	while (true)
 	{
 		think(settings, philo);
@@ -190,9 +192,7 @@ void	*monitor_routine(void *arg)
 		}
 	}
 }
- // this doesnt work; better just have an array of philos with everything in them
-// just remember to make the mutex members be pointers to a single variable
-// so get rid of t_settings
+
 void	simulate(t_settings *settings)
 {
 	int			i;
@@ -210,9 +210,8 @@ void	simulate(t_settings *settings)
 	routine_args.settings = settings;
 	while (i < settings->n_philos)
 	{
-		ttings_and_philo[1] = (void *) &settings->philos[i];
-		//pthread_create(&threads[i], NULL, &philo_routine, &settings->philos[i]);
-		pthread_create(&threads[i], NULL, &philo_routine, &settings_and_philo);
+		routine_args.philos = &settings->philos[i];
+		pthread_create(&threads[i], NULL, &philo_routine, &routine_args);
 		i++;
 	}
 	pthread_join(monitor_thd, NULL);
@@ -225,7 +224,6 @@ void	simulate(t_settings *settings)
 	return ;
 }
 
-// TODO IDs start at 1
 int main(int argc, char **argv)
 {
 	t_settings settings;
