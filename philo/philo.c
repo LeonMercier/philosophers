@@ -6,7 +6,7 @@
 /*   By: lemercie <lemercie@student.hive.fi>        +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/09/07 12:22:58 by lemercie          #+#    #+#             */
-/*   Updated: 2024/09/18 12:12:39 by lemercie         ###   ########.fr       */
+/*   Updated: 2024/09/18 12:22:37 by lemercie         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -229,7 +229,8 @@ void	simulate(t_philo *philos)
 	}
 	return ;
 }
-
+// TODO: died message has to be the last thing printed
+// TODO: 5 310 100 100 is NOT allowed to die
 int	main(int argc, char **argv)
 {
 	t_settings settings;
