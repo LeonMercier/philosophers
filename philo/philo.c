@@ -6,11 +6,12 @@
 /*   By: lemercie <lemercie@student.hive.fi>        +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/09/07 12:22:58 by lemercie          #+#    #+#             */
-/*   Updated: 2024/09/18 13:32:40 by lemercie         ###   ########.fr       */
+/*   Updated: 2024/09/18 14:19:28 by lemercie         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "philo.h"
+#include <unistd.h>
 
 long long	get_cur_time_ms(void)
 {
@@ -77,6 +78,15 @@ void	philo_sleep(t_settings *settings, t_philo *philo)
 	usleep(settings->time_to_sleep * 1000);
 }
 
+void	kill_philo(int id, t_settings *settings)
+{
+	pthread_mutex_lock(&settings->dead_philo_lock);
+	settings->dead_philo = id;
+	pthread_mutex_unlock(&settings->dead_philo_lock);
+	ft_mutex_print(get_cur_time_ms() - settings->start_time, id,
+		"died", &settings->print_lock);
+}
+
 // philo will be blocked in this function until they can pick up both forks 
 // conceptually they will be thinking
 // TODO: how is the philo gonna starve while waiting here?
@@ -86,6 +96,14 @@ void	pickup_forks(t_settings *settings, t_philo *philo)
 	pthread_mutex_lock(philo->left);
 	ft_mutex_print(get_cur_time_ms() - settings->start_time, philo->id,
 		"has taken a fork", &settings->print_lock);
+	if (settings->n_philos == 1)
+	{
+		usleep(settings->time_to_die);
+		kill_philo(philo->id, settings);
+		return ;
+	}
+	ft_mutex_print(get_cur_time_ms() - settings->start_time, philo->id,
+		"die", &settings->print_lock);
 	pthread_mutex_lock(philo->right);
 	ft_mutex_print(get_cur_time_ms() - settings->start_time, philo->id,
 		"has taken a fork", &settings->print_lock);
@@ -104,7 +122,6 @@ void	pickup_forks(t_settings *settings, t_philo *philo)
 // BUT what if we read neighbour state and then it changes before we attempt to
 // 		acquire the lock?
 //
-// TODO:always die with a single philo
 //
 // suggestion
 // monitor in an infinte loop for time to die of each philo
@@ -119,26 +136,25 @@ void	*philo_routine(void *arg)
 	philo = (t_philo *) arg;
 	while (true)
 	{
-		think(philo->settings, philo);
-		pickup_forks(philo->settings, philo);
-		eat(philo->settings, philo);
-		philo_sleep(philo->settings, philo);
-		if (philo->settings->dead_philo > -1)
+		if (!all_alive(philo->settings))
 			return (NULL);
+		think(philo->settings, philo);
+		if (!all_alive(philo->settings))
+			return (NULL);
+		pickup_forks(philo->settings, philo);
+		if (!all_alive(philo->settings))
+			return (NULL);
+		eat(philo->settings, philo);
+		if (!all_alive(philo->settings))
+			return (NULL);
+		philo_sleep(philo->settings, philo);
 		if (philo->times_eaten == philo->settings->n_meals)
 			return (NULL);
 	}
 	return (NULL);
 }
 
-void	kill_philo(int id, t_settings *settings)
-{
-	pthread_mutex_lock(&settings->dead_philo_lock);
-	settings->dead_philo = id;
-	pthread_mutex_unlock(&settings->dead_philo_lock);
-	ft_mutex_print(get_cur_time_ms() - settings->start_time, id,
-		"died", &settings->print_lock);
-}
+
 
 bool	check_alive(t_philo *philos)
 {
