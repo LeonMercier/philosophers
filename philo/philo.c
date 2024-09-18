@@ -6,7 +6,7 @@
 /*   By: lemercie <lemercie@student.hive.fi>        +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/09/07 12:22:58 by lemercie          #+#    #+#             */
-/*   Updated: 2024/09/18 12:27:22 by lemercie         ###   ########.fr       */
+/*   Updated: 2024/09/18 13:32:40 by lemercie         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -231,15 +231,25 @@ void	simulate(t_philo *philos)
 }
 // TODO: died message has to be the last thing printed
 // TODO: 5 310 100 100 is NOT allowed to die
-// TODO: validate arguments better
 int	main(int argc, char **argv)
 {
 	t_settings settings;
+	int	i;
 
 	if (argc < 5 || argc > 6)
 	{
 		printf("Error: need 4 or 5 arguments\n");
 		return (1);
+	}
+	i = 1;
+	while (i < argc)
+	{
+		if (is_valid_number(argv[i]) == false)
+		{
+			printf("Error: argument is not a positive number\n");
+			return (1);
+		}
+		i++;
 	}
 	settings.n_philos = ft_atoi(argv[1]);
 	settings.time_to_die = ft_atoi(argv[2]);

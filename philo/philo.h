@@ -6,7 +6,7 @@
 /*   By: lemercie <lemercie@student.hive.fi>        +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/09/07 11:40:55 by lemercie          #+#    #+#             */
-/*   Updated: 2024/09/18 12:15:25 by lemercie         ###   ########.fr       */
+/*   Updated: 2024/09/18 13:29:24 by lemercie         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -54,6 +54,7 @@ typedef struct s_two_ptr
 // init.c
 int			init(t_settings *settings);
 // ft_atoi.c
+bool	is_valid_number(char *s);
 int			ft_atoi(char *s);
 // philo.c
 void		simulate(t_philo *philos);
