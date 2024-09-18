@@ -6,7 +6,7 @@
 /*   By: lemercie <lemercie@student.hive.fi>        +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/09/07 11:40:55 by lemercie          #+#    #+#             */
-/*   Updated: 2024/09/13 10:51:16 by lemercie         ###   ########.fr       */
+/*   Updated: 2024/09/18 12:15:25 by lemercie         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -45,7 +45,6 @@ typedef struct s_philo
 	t_settings		*settings;
 }	t_philo;
 
-
 typedef struct s_two_ptr
 {
 	t_settings	*settings;
@@ -53,10 +52,10 @@ typedef struct s_two_ptr
 }	t_two_ptr;
 
 // init.c
-int init(t_settings *settings);
+int			init(t_settings *settings);
 // ft_atoi.c
-int	ft_atoi(char *s);
+int			ft_atoi(char *s);
 // philo.c
-void	simulate(t_philo *philos);
-long long	get_cur_time_ms();
+void		simulate(t_philo *philos);
+long long	get_cur_time_ms(void);
 #endif

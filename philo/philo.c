@@ -6,13 +6,13 @@
 /*   By: lemercie <lemercie@student.hive.fi>        +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/09/07 12:22:58 by lemercie          #+#    #+#             */
-/*   Updated: 2024/09/18 12:02:26 by lemercie         ###   ########.fr       */
+/*   Updated: 2024/09/18 12:12:39 by lemercie         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "philo.h"
 
-long long	get_cur_time_ms()
+long long	get_cur_time_ms(void)
 {
 	struct timeval	time;
 
@@ -24,7 +24,8 @@ long long	get_cur_time_ms()
 	return ((time.tv_sec * 1000) + (time.tv_usec / 1000));
 }
 
-void	ft_mutex_print(long long time, int id, char *msg, pthread_mutex_t *mutex)
+void	ft_mutex_print(long long time, int id, char *msg,
+			pthread_mutex_t *mutex)
 {
 	int	pretty_id;
 
@@ -60,7 +61,7 @@ void	eat(t_settings *settings, t_philo *philo)
 {
 	philo->eating = true;
 	ft_mutex_print(get_cur_time_ms() - settings->start_time, philo->id,
-				"is eating", &settings->print_lock);
+		"is eating", &settings->print_lock);
 	philo->started_eating = get_cur_time_ms();
 	usleep(settings->time_to_eat * 1000);
 	philo->times_eaten++;
@@ -72,7 +73,7 @@ void	eat(t_settings *settings, t_philo *philo)
 void	philo_sleep(t_settings *settings, t_philo *philo)
 {
 	ft_mutex_print(get_cur_time_ms() - settings->start_time, philo->id,
-				"is sleeping", &settings->print_lock);
+		"is sleeping", &settings->print_lock);
 	usleep(settings->time_to_sleep * 1000);
 }
 
@@ -84,10 +85,10 @@ void	pickup_forks(t_settings *settings, t_philo *philo)
 	pthread_mutex_lock(&settings->pickup_lock);
 	pthread_mutex_lock(philo->left);
 	ft_mutex_print(get_cur_time_ms() - settings->start_time, philo->id,
-				"has taken a fork", &settings->print_lock);
+		"has taken a fork", &settings->print_lock);
 	pthread_mutex_lock(philo->right);
 	ft_mutex_print(get_cur_time_ms() - settings->start_time, philo->id,
-				"has taken a fork", &settings->print_lock);
+		"has taken a fork", &settings->print_lock);
 	pthread_mutex_unlock(&settings->pickup_lock);
 	usleep(100);
 }
@@ -136,7 +137,7 @@ void	kill_philo(int id, t_settings *settings)
 	settings->dead_philo = id;
 	pthread_mutex_unlock(&settings->dead_philo_lock);
 	ft_mutex_print(get_cur_time_ms() - settings->start_time, id,
-				"died", &settings->print_lock);
+		"died", &settings->print_lock);
 }
 
 bool	check_alive(t_philo *philos)
@@ -229,7 +230,7 @@ void	simulate(t_philo *philos)
 	return ;
 }
 
-int main(int argc, char **argv)
+int	main(int argc, char **argv)
 {
 	t_settings settings;
 

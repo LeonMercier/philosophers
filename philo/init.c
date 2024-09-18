@@ -6,7 +6,7 @@
 /*   By: lemercie <lemercie@student.hive.fi>        +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/09/13 11:51:57 by lemercie          #+#    #+#             */
-/*   Updated: 2024/09/18 11:37:01 by lemercie         ###   ########.fr       */
+/*   Updated: 2024/09/18 12:15:59 by lemercie         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -43,7 +43,6 @@ static t_philo	*allocate_philos(t_settings *settings, pthread_mutex_t *forks)
 		philos[i].id = i;
 		philos[i].eating = false;
 		philos[i].start_time = get_cur_time_ms();
-		printf("%lli\n", philos[i].start_time);
 		philos[i].started_eating = -1;
 		philos[i].times_eaten = 0;
 		if (i == 0)
@@ -67,7 +66,7 @@ static t_philo	*allocate_philos(t_settings *settings, pthread_mutex_t *forks)
 	return (philos);
 }
 
-int init(t_settings *settings)
+int	init(t_settings *settings)
 {
 	pthread_mutex_t	*forks;
 	t_philo			*philos;
