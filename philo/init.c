@@ -6,7 +6,7 @@
 /*   By: lemercie <lemercie@student.hive.fi>        +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/09/13 11:51:57 by lemercie          #+#    #+#             */
-/*   Updated: 2024/09/18 12:15:59 by lemercie         ###   ########.fr       */
+/*   Updated: 2024/09/18 16:27:50 by lemercie         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -49,11 +49,6 @@ static t_philo	*allocate_philos(t_settings *settings, pthread_mutex_t *forks)
 		{
 			philos[i].left = &forks[settings->n_philos - 1];
 			philos[i].right = &forks[i];
-		}
-		else if (i == settings->n_philos - 1)
-		{
-			philos[i].left = &forks[i];
-			philos[i].right = &forks[0];
 		}
 		else
 		{
