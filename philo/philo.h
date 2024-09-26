@@ -6,7 +6,7 @@
 /*   By: lemercie <lemercie@student.hive.fi>        +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/09/07 11:40:55 by lemercie          #+#    #+#             */
-/*   Updated: 2024/09/18 13:29:24 by lemercie         ###   ########.fr       */
+/*   Updated: 2024/09/26 16:29:43 by lemercie         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -31,6 +31,7 @@ typedef struct s_settings
 	pthread_mutex_t	dead_philo_lock;
 	pthread_mutex_t	print_lock;
 	pthread_mutex_t	pickup_lock;
+	pthread_mutex_t	eat_status_lock;
 }	t_settings;
 
 typedef struct s_philo
@@ -54,7 +55,7 @@ typedef struct s_two_ptr
 // init.c
 int			init(t_settings *settings);
 // ft_atoi.c
-bool	is_valid_number(char *s);
+bool		is_valid_number(char *s);
 int			ft_atoi(char *s);
 // philo.c
 void		simulate(t_philo *philos);
