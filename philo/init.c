@@ -6,7 +6,7 @@
 /*   By: lemercie <lemercie@student.hive.fi>        +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/09/13 11:51:57 by lemercie          #+#    #+#             */
-/*   Updated: 2024/09/18 16:27:50 by lemercie         ###   ########.fr       */
+/*   Updated: 2024/12/10 17:04:10 by lemercie         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -41,7 +41,6 @@ static t_philo	*allocate_philos(t_settings *settings, pthread_mutex_t *forks)
 	while (i < settings->n_philos)
 	{
 		philos[i].id = i;
-		philos[i].eating = false;
 		philos[i].start_time = get_cur_time_ms();
 		philos[i].started_eating = -1;
 		philos[i].times_eaten = 0;
@@ -65,6 +64,7 @@ int	init(t_settings *settings)
 {
 	pthread_mutex_t	*forks;
 	t_philo			*philos;
+	int				i;
 
 	forks = allocate_forks(settings->n_philos); // NULL can arrive here
 	if (!forks)
@@ -72,9 +72,22 @@ int	init(t_settings *settings)
 	philos = allocate_philos(settings, forks); // NULL can arrive here
 	if (!philos)
 	{
-		// forks -> destroy mutexes
+		i = 0;
+		while (i < settings->n_philos)
+		{
+			pthread_mutex_destroy(&forks[i]);
+			i++;
+		}
 		return (1);
 	}
 	simulate(philos);
+	// free stuff because this is the end regardless of success
+	free(philos);
+	i = 0;
+	while (i < settings->n_philos)
+	{
+		pthread_mutex_destroy(&forks[i]);
+		i++;
+	}
 	return (0);
 }

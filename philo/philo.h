@@ -6,7 +6,7 @@
 /*   By: lemercie <lemercie@student.hive.fi>        +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/09/07 11:40:55 by lemercie          #+#    #+#             */
-/*   Updated: 2024/09/27 10:09:45 by lemercie         ###   ########.fr       */
+/*   Updated: 2024/12/10 17:03:50 by lemercie         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -28,14 +28,13 @@ typedef struct s_settings
 	int				n_meals;
 	int				dead_philo;
 	long long		start_time;
-	pthread_mutex_t	print_lock;
+	bool			simu_done;
 	pthread_mutex_t	critical_region;
 }	t_settings;
 
 typedef struct s_philo
 {
 	int				id;
-	bool			eating;
 	long long		start_time;
 	long long		started_eating;
 	int				times_eaten;
@@ -50,12 +49,21 @@ typedef struct s_two_ptr
 	t_philo		*philos;
 }	t_two_ptr;
 
+// common.c
+void		ft_mutex_print(long long time, t_philo *philo, char *msg);
+void		kill_philo(t_philo *philo, t_settings *settings);
 // init.c
 int			init(t_settings *settings);
 // ft_atoi.c
 bool		is_valid_number(char *s);
 int			ft_atoi(char *s);
+// monitor.c
+void		*monitor_routine(void *arg);
 // philo.c
 void		simulate(t_philo *philos);
+long long	get_cur_time_ms(void);
+// simulate.c
+void		simulate(t_philo *philos);
+// time.c
 long long	get_cur_time_ms(void);
 #endif

@@ -6,7 +6,7 @@
 #    By: lemercie <lemercie@student.hive.fi>        +#+  +:+       +#+         #
 #                                                 +#+#+#+#+#+   +#+            #
 #    Created: 2024/07/01 11:56:58 by lemercie          #+#    #+#              #
-#    Updated: 2024/09/10 12:03:42 by leon             ###   ########.fr        #
+#    Updated: 2024/12/10 16:40:49 by lemercie         ###   ########.fr        #
 #                                                                              #
 # **************************************************************************** #
 
@@ -14,7 +14,7 @@ CC		:= cc
 CFLAGS	:= -g -Wextra -Wall -Werror -pthread
 #CFLAGS	:= 
 NAME	:= philo
-SRCS	:= philo.c ft_atoi.c init.c
+SRCS	:=  common.c ft_atoi.c init.c monitor.c philo.c simulate.c time.c
 OBJS	:= ${SRCS:.c=.o}
 
 all: $(NAME)
