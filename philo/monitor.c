@@ -6,13 +6,22 @@
 /*   By: lemercie <lemercie@student.hive.fi>        +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/12/10 16:36:23 by lemercie          #+#    #+#             */
-/*   Updated: 2024/12/10 17:23:17 by lemercie         ###   ########.fr       */
+/*   Updated: 2024/12/15 19:48:18 by lemercie         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "philo.h"
 
-static bool	check_alive(t_philo *philos)
+static void	set_death(t_philo *philos, int i)
+{
+	pthread_mutex_lock(&philos->settings->critical_region);
+	philos->settings->dead_philo = i;
+	pthread_mutex_unlock(&philos->settings->critical_region);
+	ft_mutex_print(get_cur_time_ms() - philos[i].start_time,
+		&philos[i], "died");
+}
+
+static bool	all_alive(t_philo *philos)
 {
 	int	i;
 
@@ -24,7 +33,7 @@ static bool	check_alive(t_philo *philos)
 			if ((get_cur_time_ms() - philos[i].start_time)
 				> philos->settings->time_to_die)
 			{
-				kill_philo(&philos[i], philos->settings);
+				set_death(philos, i);
 				return (false);
 			}
 		}
@@ -33,8 +42,7 @@ static bool	check_alive(t_philo *philos)
 			if ((get_cur_time_ms() - philos[i].started_eating)
 				> philos->settings->time_to_die)
 			{
-				printf("KILL\n");
-				kill_philo(&philos[i], philos->settings);
+				set_death(philos, i);
 				return (false);
 			}
 		}
@@ -64,14 +72,12 @@ void	*monitor_routine(void *arg)
 	t_philo	*philos;
 
 	philos = (t_philo *) arg;
+	usleep(1000); //TODO remove this and start monitor thread after philo threadds?
 	while (true)
 	{
-		usleep(100); // HMMM
-		if (check_alive(philos) == false)
+		if (all_alive(philos) == false)
 		{
 			philos->settings->simu_done = true;
-			ft_mutex_print(get_cur_time_ms() - philos->settings->start_time,
-				   philos, "lol");
 			return (NULL);
 		}
 		if (philos->settings->n_meals > -1 && all_eaten(philos))

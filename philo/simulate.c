@@ -6,42 +6,40 @@
 /*   By: lemercie <lemercie@student.hive.fi>        +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/12/10 16:11:00 by lemercie          #+#    #+#             */
-/*   Updated: 2024/12/10 17:29:21 by lemercie         ###   ########.fr       */
+/*   Updated: 2024/12/15 19:43:12 by lemercie         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "philo.h"
 
-/*
-bool	all_alive(void *arg)
+int	ft_wait(t_settings *settings, long long int to_wait_ms)
 {
-	t_settings	*settings;
+	long long int	end_time;
 
-	settings = (t_settings *) arg;
-	pthread_mutex_lock(&settings->critical_region);
-	if (settings->dead_philo == -1)
+	end_time = get_cur_time_ms() + to_wait_ms;
+	while (get_cur_time_ms() < end_time)
 	{
-		pthread_mutex_unlock(&settings->critical_region);
-		return (true);
+		usleep(250);
+		if (settings->simu_done)
+			return (1);
 	}
-	pthread_mutex_unlock(&settings->critical_region);
-	return (false);
+	return (0);
 }
-*/
-void	think(t_settings *settings, t_philo *philo)
+
+void	think(t_philo *philo)
 {
-	ft_mutex_print(get_cur_time_ms() - settings->start_time, philo,
+	ft_mutex_print(get_cur_time_ms() - philo->start_time, philo,
 		"is thinking");
 }
 
 void	eat(t_settings *settings, t_philo *philo)
 {
-	ft_mutex_print(get_cur_time_ms() - settings->start_time, philo,
+	ft_mutex_print(get_cur_time_ms() - philo->start_time, philo,
 				"is eating");
 //	pthread_mutex_lock(&settings->critical_region);
 	philo->started_eating = get_cur_time_ms();
 //	pthread_mutex_unlock(&settings->critical_region);
-	usleep(settings->time_to_eat * 1000);
+	ft_wait(settings, settings->time_to_eat);
 //	pthread_mutex_lock(&settings->critical_region);
 	philo->times_eaten++;
 //	pthread_mutex_unlock(&settings->critical_region);
@@ -51,9 +49,9 @@ void	eat(t_settings *settings, t_philo *philo)
 
 void	philo_sleep(t_settings *settings, t_philo *philo)
 {
-	ft_mutex_print(get_cur_time_ms() - settings->start_time, philo,
+	ft_mutex_print(get_cur_time_ms() - philo->start_time, philo,
 		"is sleeping");
-	usleep(settings->time_to_sleep * 1000);
+	ft_wait(settings, settings->time_to_sleep);
 }
 
 // philo will be blocked in this function until they can pick up both forks 
@@ -63,24 +61,25 @@ void	pickup_forks(t_settings *settings, t_philo *philo)
 	if (settings->n_philos == 1)
 	{
 		pthread_mutex_lock(philo->left);
-		ft_mutex_print(get_cur_time_ms() - settings->start_time, philo,
+		ft_mutex_print(get_cur_time_ms() - philo->start_time, philo,
 			"has taken a fork");
-		usleep(settings->time_to_die * 1000);
+		ft_wait(settings, settings->time_to_eat);
 		pthread_mutex_unlock(philo->left);
-		kill_philo(philo, settings);
+		philo->settings->dead_philo = 0;
+		ft_mutex_print(get_cur_time_ms() - philo->start_time, philo, "died");
 		return ;
 	}
 	if (philo->id % 2 == 0)
 		pthread_mutex_lock(philo->left);
 	else
 		pthread_mutex_lock(philo->right);
-	ft_mutex_print(get_cur_time_ms() - settings->start_time, philo,
+	ft_mutex_print(get_cur_time_ms() - philo->start_time, philo,
 		"has taken a fork");
 	if (philo->id % 2 == 0)
 		pthread_mutex_lock(philo->right);
 	else
 		pthread_mutex_lock(philo->left);
-	ft_mutex_print(get_cur_time_ms() - settings->start_time, philo,
+	ft_mutex_print(get_cur_time_ms() - philo->start_time, philo,
 		"has taken a fork");
 }
 
@@ -90,27 +89,18 @@ void	*philo_routine(void *arg)
 	t_philo	*philo;
 
 	philo = (t_philo *) arg;
+	philo->start_time = get_cur_time_ms();
 	while (true)
 	{
-		think(philo->settings, philo);
+		think(philo);
 		pickup_forks(philo->settings, philo);
-		/*
-		if (!all_alive(philo->settings))
-		{
-			pthread_mutex_unlock(philo->left);
-			pthread_mutex_unlock(philo->right);
-			return (NULL);
-		}
-		*/
+	
 		eat(philo->settings, philo);
 		philo_sleep(philo->settings, philo);
-//		pthread_mutex_lock(&philo->settings->critical_region);
 		if (philo->settings->simu_done)
 		{
-//			pthread_mutex_unlock(&philo->settings->critical_region);
 			return (NULL);
 		}
-//		pthread_mutex_unlock(&philo->settings->critical_region);
 	}
 	return (NULL);
 }
@@ -132,7 +122,6 @@ void	simulate(t_philo *philos)
 		free(threads);
 		return ;
 	}
-	philos->settings->start_time = get_cur_time_ms();
 	i = 0;
 	while (i < philos->settings->n_philos)
 	{

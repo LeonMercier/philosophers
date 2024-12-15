@@ -6,7 +6,7 @@
 /*   By: lemercie <lemercie@student.hive.fi>        +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/09/13 11:51:57 by lemercie          #+#    #+#             */
-/*   Updated: 2024/12/10 17:04:10 by lemercie         ###   ########.fr       */
+/*   Updated: 2024/12/15 19:39:25 by lemercie         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -41,7 +41,6 @@ static t_philo	*allocate_philos(t_settings *settings, pthread_mutex_t *forks)
 	while (i < settings->n_philos)
 	{
 		philos[i].id = i;
-		philos[i].start_time = get_cur_time_ms();
 		philos[i].started_eating = -1;
 		philos[i].times_eaten = 0;
 		if (i == 0)
@@ -66,10 +65,10 @@ int	init(t_settings *settings)
 	t_philo			*philos;
 	int				i;
 
-	forks = allocate_forks(settings->n_philos); // NULL can arrive here
+	forks = allocate_forks(settings->n_philos);
 	if (!forks)
 		return (1);
-	philos = allocate_philos(settings, forks); // NULL can arrive here
+	philos = allocate_philos(settings, forks);
 	if (!philos)
 	{
 		i = 0;
@@ -89,5 +88,6 @@ int	init(t_settings *settings)
 		pthread_mutex_destroy(&forks[i]);
 		i++;
 	}
+	pthread_mutex_destroy(&settings->critical_region);
 	return (0);
 }

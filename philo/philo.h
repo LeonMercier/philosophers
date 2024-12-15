@@ -6,7 +6,7 @@
 /*   By: lemercie <lemercie@student.hive.fi>        +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/09/07 11:40:55 by lemercie          #+#    #+#             */
-/*   Updated: 2024/12/10 17:03:50 by lemercie         ###   ########.fr       */
+/*   Updated: 2024/12/15 18:46:41 by lemercie         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -27,7 +27,6 @@ typedef struct s_settings
 	int				time_to_sleep;
 	int				n_meals;
 	int				dead_philo;
-	long long		start_time;
 	bool			simu_done;
 	pthread_mutex_t	critical_region;
 }	t_settings;
@@ -51,7 +50,6 @@ typedef struct s_two_ptr
 
 // common.c
 void		ft_mutex_print(long long time, t_philo *philo, char *msg);
-void		kill_philo(t_philo *philo, t_settings *settings);
 // init.c
 int			init(t_settings *settings);
 // ft_atoi.c

@@ -6,7 +6,7 @@
 /*   By: lemercie <lemercie@student.hive.fi>        +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/09/07 12:22:58 by lemercie          #+#    #+#             */
-/*   Updated: 2024/12/10 17:19:40 by lemercie         ###   ########.fr       */
+/*   Updated: 2024/12/15 18:07:54 by lemercie         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -19,7 +19,6 @@ static void	init_settings(t_settings *settings, int argc, char **argv)
 	settings->time_to_eat = ft_atoi(argv[3]);
 	settings->time_to_sleep = ft_atoi(argv[4]);
 	settings->dead_philo = -1;
-	settings->start_time = -1;
 	settings->simu_done = false;
 	pthread_mutex_init(&settings->critical_region, NULL);
 	if (argc == 6)
@@ -51,7 +50,7 @@ static int	validate_args(int argc, char **argv)
 }
 
 // TODO: died message has to be the last thing printed
-// TODO: 5 310 100 100 is NOT allowed to die
+// TODO: 5 800 200 200 is NOT allowed to die
 int	main(int argc, char **argv)
 {
 	t_settings settings;
@@ -60,10 +59,6 @@ int	main(int argc, char **argv)
 		return (1);
 	init_settings(&settings, argc, argv);
 	if (init(&settings))
-	{
-		pthread_mutex_destroy(&settings.critical_region);
 		return (1);
-	}
-	pthread_mutex_destroy(&settings.critical_region);
 	return (0);
 }
