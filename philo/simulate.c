@@ -6,71 +6,11 @@
 /*   By: lemercie <lemercie@student.hive.fi>        +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/12/10 16:11:00 by lemercie          #+#    #+#             */
-/*   Updated: 2024/12/16 14:47:41 by lemercie         ###   ########.fr       */
+/*   Updated: 2024/12/16 15:20:37 by lemercie         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "philo.h"
-
-int	ft_wait(t_settings *settings, long long int to_wait_ms)
-{
-	long long int	end_time;
-
-	end_time = get_cur_time_ms() + to_wait_ms;
-	while (get_cur_time_ms() < end_time)
-	{
-		pthread_mutex_lock(&settings->critical_region);
-		if (settings->simu_done)
-		{
-			pthread_mutex_unlock(&settings->critical_region);
-			return (1);
-		}
-		pthread_mutex_unlock(&settings->critical_region);
-		usleep(500);
-	}
-	return (0);
-}
-
-void	think(t_philo *philo)
-{
-	ft_mutex_print(philo, "is thinking");
-}
-
-void	eat(t_settings *settings, t_philo *philo)
-{
-	ft_mutex_print(philo, "is eating");
-	pthread_mutex_lock(&settings->critical_region);
-	philo->started_eating = get_cur_time_ms();
-	pthread_mutex_unlock(&settings->critical_region);
-	ft_wait(settings, settings->time_to_eat);
-	pthread_mutex_lock(&settings->critical_region);
-	philo->times_eaten++;
-	pthread_mutex_unlock(&settings->critical_region);
-	pthread_mutex_unlock(philo->left);
-	pthread_mutex_unlock(philo->right);
-}
-
-void	philo_sleep(t_settings *settings, t_philo *philo)
-{
-	ft_mutex_print(philo, "is sleeping");
-	ft_wait(settings, settings->time_to_sleep);
-}
-
-// philo will be blocked in this function until they can pick up both forks 
-// conceptually they will be thinking
-void	pickup_forks(t_philo *philo)
-{
-	if (philo->id % 2 == 0)
-		pthread_mutex_lock(philo->left);
-	else
-		pthread_mutex_lock(philo->right);
-	ft_mutex_print(philo, "has taken a fork");
-	if (philo->id % 2 == 0)
-		pthread_mutex_lock(philo->right);
-	else
-		pthread_mutex_lock(philo->left);
-	ft_mutex_print(philo, "has taken a fork");
-}
 
 bool	simu_done(t_settings *settings)
 {
@@ -84,7 +24,7 @@ bool	simu_done(t_settings *settings)
 	return (false);
 }
 
-void	*single_philo(t_philo *philo)
+static void	*single_philo(t_philo *philo)
 {
 	pthread_mutex_lock(philo->left);
 	ft_mutex_print(philo, "has taken a fork");
@@ -93,10 +33,10 @@ void	*single_philo(t_philo *philo)
 	pthread_mutex_lock(&philo->settings->critical_region);
 	philo->settings->dead_philo = 0;
 	pthread_mutex_unlock(&philo->settings->critical_region);
-	return NULL;
+	return (NULL);
 }
 
-void	*philo_routine(void *arg)
+static void	*philo_routine(void *arg)
 {
 	t_philo	*philo;
 
@@ -111,8 +51,8 @@ void	*philo_routine(void *arg)
 	while (true)
 	{
 		think(philo);
-		if (simu_done(philo->settings))
-			return (NULL);
+//		if (simu_done(philo->settings))
+//			return (NULL);
 		pickup_forks(philo);
 		if (simu_done(philo->settings))
 		{
@@ -121,32 +61,25 @@ void	*philo_routine(void *arg)
 			return (NULL);
 		}
 		eat(philo->settings, philo);
-		if (simu_done(philo->settings))
-			return (NULL);
+//		if (simu_done(philo->settings))
+//			return (NULL);
 		philo_sleep(philo->settings, philo);
-		if (simu_done(philo->settings))
-			return (NULL);
+//		if (simu_done(philo->settings))
+//			return (NULL);
 		if (philo->id % 2 == 0)
 			usleep(750);
 	}
 	return (NULL);
 }
 
-void	simulate(t_philo *philos)
+static pthread_t	*start_philos(t_philo *philos)
 {
 	int			i;
 	pthread_t	*threads;
-	pthread_t	monitor_thd;
 
 	threads = malloc(sizeof(pthread_t) * philos->settings->n_philos);
 	if (!threads)
-		return ;
-	if (pthread_create(&monitor_thd, NULL, &monitor_routine, philos) != 0)
-	{
-		printf("fail to create thread\n");
-		free(threads);
-		return ;
-	}
+		return (NULL);
 	i = 0;
 	while (i < philos->settings->n_philos)
 	{
@@ -154,11 +87,29 @@ void	simulate(t_philo *philos)
 		{
 			printf("fail to create thread\n");
 			philos->settings->simu_done = true;
-			pthread_join(monitor_thd, NULL);
 			join_threads(threads, i - 1);
-			return ;
+			return (NULL);
 		}
 		i++;
+	}
+	return (threads);
+}
+
+void	simulate(t_philo *philos)
+{
+	pthread_t	*threads;
+	pthread_t	monitor_thd;
+
+	if (pthread_create(&monitor_thd, NULL, &monitor_routine, philos) != 0)
+	{
+		printf("fail to create thread\n");
+		return ;
+	}
+	threads = start_philos(philos);
+	if (!threads)
+	{
+		pthread_join(monitor_thd, NULL);
+		return ;
 	}
 	pthread_join(monitor_thd, NULL);
 	join_threads(threads, philos->settings->n_philos - 1);

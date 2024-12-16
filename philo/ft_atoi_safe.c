@@ -6,7 +6,7 @@
 /*   By: lemercie <lemercie@student.hive.fi>        +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/04/19 14:16:46 by lemercie          #+#    #+#             */
-/*   Updated: 2024/12/16 14:28:04 by lemercie         ###   ########.fr       */
+/*   Updated: 2024/12/16 15:02:47 by lemercie         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -15,7 +15,7 @@
 * This version sets error if there are tailing non-digits
 */
 
-static bool ft_isdigit(char c)
+static bool	ft_isdigit(char c)
 {
 	return (c >= '0' && c <= '9');
 }

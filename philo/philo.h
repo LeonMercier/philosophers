@@ -6,7 +6,7 @@
 /*   By: lemercie <lemercie@student.hive.fi>        +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/09/07 11:40:55 by lemercie          #+#    #+#             */
-/*   Updated: 2024/12/16 12:30:10 by lemercie         ###   ########.fr       */
+/*   Updated: 2024/12/16 15:19:28 by lemercie         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -49,9 +49,16 @@ typedef struct s_two_ptr
 	t_philo		*philos;
 }	t_two_ptr;
 
+// actions.c
+
+int			ft_wait(t_settings *settings, long long int to_wait_ms);
+void		think(t_philo *philo);
+void		eat(t_settings *settings, t_philo *philo);
+void		philo_sleep(t_settings *settings, t_philo *philo);
+void		pickup_forks(t_philo *philo);
 // cleanup.c
-void	destroy_forks(pthread_mutex_t *forks, int num);
-void	join_threads(pthread_t *threads, int num);
+void		destroy_forks(pthread_mutex_t *forks, int num);
+void		join_threads(pthread_t *threads, int num);
 // common.c
 void		ft_mutex_print(t_philo *philo, char *msg);
 // init.c

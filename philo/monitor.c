@@ -6,18 +6,19 @@
 /*   By: lemercie <lemercie@student.hive.fi>        +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/12/10 16:36:23 by lemercie          #+#    #+#             */
-/*   Updated: 2024/12/16 12:04:35 by lemercie         ###   ########.fr       */
+/*   Updated: 2024/12/16 15:05:57 by lemercie         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "philo.h"
 
-static void	set_death(t_philo *philos, int i)
+static bool	set_death(t_philo *philos, int i)
 {
 	pthread_mutex_lock(&philos->settings->critical_region);
 	philos->settings->dead_philo = i;
 	pthread_mutex_unlock(&philos->settings->critical_region);
 	ft_mutex_print(&philos[i], "died");
+	return (false);
 }
 
 static bool	all_alive(t_philo *philos)
@@ -33,20 +34,14 @@ static bool	all_alive(t_philo *philos)
 			pthread_mutex_unlock(&philos->settings->critical_region);
 			if ((get_cur_time_ms() - philos[i].start_time)
 				> philos->settings->time_to_die)
-			{
-				set_death(philos, i);
-				return (false);
-			}
+				return (set_death(philos, i));
 		}
 		else
 		{
 			pthread_mutex_unlock(&philos->settings->critical_region);
 			if ((get_cur_time_ms() - philos[i].started_eating)
 				> philos->settings->time_to_die)
-			{
-				set_death(philos, i);
-				return (false);
-			}
+				return (set_death(philos, i));
 		}
 		i++;
 	}
@@ -72,12 +67,13 @@ static bool	all_eaten(t_philo *philos)
 	return (true);
 }
 
+// TODO: remove sleep and start monitor after philos instead?
 void	*monitor_routine(void *arg)
 {
 	t_philo	*philos;
 
 	philos = (t_philo *) arg;
-	usleep(10000); //TODO remove this and start monitor thread after philo threadds?
+	usleep(1000);
 	while (true)
 	{
 		if (all_alive(philos) == false)

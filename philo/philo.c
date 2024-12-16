@@ -6,7 +6,7 @@
 /*   By: lemercie <lemercie@student.hive.fi>        +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/09/07 12:22:58 by lemercie          #+#    #+#             */
-/*   Updated: 2024/12/16 14:25:46 by lemercie         ###   ########.fr       */
+/*   Updated: 2024/12/16 15:21:24 by lemercie         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -15,37 +15,28 @@
 static int	init_settings(t_settings *settings, int argc, char **argv)
 {
 	int	err_atoi;
-	int	tmp;
 
 	err_atoi = 0;
-	tmp = ft_atoi_safe(argv[1], &err_atoi);
-	if (err_atoi || tmp < 0)
+	settings->n_philos = ft_atoi_safe(argv[1], &err_atoi);
+	if (err_atoi || settings->n_philos < 0)
 		return (1);
-	settings->n_philos = tmp;
-	tmp = ft_atoi_safe(argv[2], &err_atoi);
-	if (err_atoi || tmp < 0)
+	settings->time_to_die = ft_atoi_safe(argv[2], &err_atoi);
+	if (err_atoi || settings->time_to_die < 0)
 		return (1);
-	settings->time_to_die = tmp;
-	tmp = ft_atoi_safe(argv[3], &err_atoi);
-	if (err_atoi || tmp < 0)
+	settings->time_to_eat = ft_atoi_safe(argv[3], &err_atoi);
+	if (err_atoi || settings->time_to_eat < 0)
 		return (1);
-	settings->time_to_eat = tmp;
-	tmp = ft_atoi_safe(argv[4], &err_atoi);
-	if (err_atoi || tmp < 0)
+	settings->time_to_sleep = ft_atoi_safe(argv[4], &err_atoi);
+	if (err_atoi || settings->time_to_sleep < 0)
 		return (1);
-	settings->time_to_sleep = tmp;
 	if (argc == 6)
 	{
-		tmp = ft_atoi_safe(argv[5], &err_atoi);
-		if (err_atoi || tmp < 0)
+		settings->n_meals = ft_atoi_safe(argv[5], &err_atoi);
+		if (err_atoi || settings->n_meals < 0)
 			return (1);
-		settings->n_meals = tmp;
 	}
 	else
 		settings->n_meals = -1;
-	settings->dead_philo = -1;
-	settings->simu_done = false;
-	pthread_mutex_init(&settings->critical_region, NULL);
 	return (0);
 }
 
@@ -62,7 +53,7 @@ static int	validate_args(int argc)
 // NOTE: 5 800 200 200 is NOT allowed to die
 int	main(int argc, char **argv)
 {
-	t_settings settings;
+	t_settings	settings;
 
 	if (validate_args(argc) == 1)
 		return (1);
@@ -80,9 +71,7 @@ int	main(int argc, char **argv)
 		return (0);
 	if (init(&settings))
 	{
-		pthread_mutex_destroy(&settings.critical_region);
 		return (1);
 	}
-	pthread_mutex_destroy(&settings.critical_region);
 	return (0);
 }
