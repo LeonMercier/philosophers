@@ -6,7 +6,7 @@
 /*   By: lemercie <lemercie@student.hive.fi>        +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/12/10 16:11:00 by lemercie          #+#    #+#             */
-/*   Updated: 2024/12/16 11:36:40 by lemercie         ###   ########.fr       */
+/*   Updated: 2024/12/16 11:57:11 by lemercie         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -72,6 +72,18 @@ void	pickup_forks(t_philo *philo)
 	ft_mutex_print(philo, "has taken a fork");
 }
 
+bool	simu_done(t_settings *settings)
+{
+	pthread_mutex_lock(&settings->critical_region);
+	if (settings->simu_done)
+	{
+		pthread_mutex_unlock(&settings->critical_region);
+		return (true);
+	}
+	pthread_mutex_unlock(&settings->critical_region);
+	return (false);
+}
+
 void	*philo_routine(void *arg)
 {
 	t_philo	*philo;
@@ -95,16 +107,20 @@ void	*philo_routine(void *arg)
 	while (true)
 	{
 		think(philo);
-		if (philo->settings->simu_done)
+		if (simu_done(philo->settings))
 			return (NULL);
 		pickup_forks(philo);
-		if (philo->settings->simu_done)
+		if (simu_done(philo->settings))
+		{
+			pthread_mutex_unlock(philo->left);
+			pthread_mutex_unlock(philo->right);
 			return (NULL);
+		}
 		eat(philo->settings, philo);
-		if (philo->settings->simu_done)
+		if (simu_done(philo->settings))
 			return (NULL);
 		philo_sleep(philo->settings, philo);
-		if (philo->settings->simu_done)
+		if (simu_done(philo->settings))
 			return (NULL);
 	}
 	return (NULL);
@@ -118,9 +134,7 @@ void	simulate(t_philo *philos)
 
 	threads = malloc(sizeof(pthread_t) * philos->settings->n_philos);
 	if (!threads)
-	{
 		return ;
-	}
 	if (pthread_create(&monitor_thd, NULL, &monitor_routine, philos) != 0)
 	{
 		printf("fail to create thread\n");
@@ -134,6 +148,7 @@ void	simulate(t_philo *philos)
 		{
 			printf("fail to create thread\n");
 			philos->settings->simu_done = true;
+			pthread_join(monitor_thd, NULL);
 			join_threads(threads, i - 1);
 			return ;
 		}
