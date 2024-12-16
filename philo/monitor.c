@@ -6,7 +6,7 @@
 /*   By: lemercie <lemercie@student.hive.fi>        +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/12/10 16:36:23 by lemercie          #+#    #+#             */
-/*   Updated: 2024/12/15 19:48:18 by lemercie         ###   ########.fr       */
+/*   Updated: 2024/12/16 10:47:38 by lemercie         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -72,7 +72,7 @@ void	*monitor_routine(void *arg)
 	t_philo	*philos;
 
 	philos = (t_philo *) arg;
-	usleep(1000); //TODO remove this and start monitor thread after philo threadds?
+	usleep(10000); //TODO remove this and start monitor thread after philo threadds?
 	while (true)
 	{
 		if (all_alive(philos) == false)

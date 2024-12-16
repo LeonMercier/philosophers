@@ -6,7 +6,7 @@
 /*   By: lemercie <lemercie@student.hive.fi>        +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/12/10 16:11:00 by lemercie          #+#    #+#             */
-/*   Updated: 2024/12/16 10:39:04 by lemercie         ###   ########.fr       */
+/*   Updated: 2024/12/16 10:53:10 by lemercie         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -56,19 +56,8 @@ void	philo_sleep(t_settings *settings, t_philo *philo)
 
 // philo will be blocked in this function until they can pick up both forks 
 // conceptually they will be thinking
-void	pickup_forks(t_settings *settings, t_philo *philo)
+void	pickup_forks(t_philo *philo)
 {
-	if (settings->n_philos == 1)
-	{
-		pthread_mutex_lock(philo->left);
-		ft_mutex_print(get_cur_time_ms() - philo->start_time, philo,
-			"has taken a fork");
-		ft_wait(settings, settings->time_to_eat);
-		pthread_mutex_unlock(philo->left);
-		philo->settings->dead_philo = 0;
-		ft_mutex_print(get_cur_time_ms() - philo->start_time, philo, "died");
-		return ;
-	}
 	if (philo->id % 2 == 0)
 		pthread_mutex_lock(philo->left);
 	else
@@ -85,16 +74,25 @@ void	pickup_forks(t_settings *settings, t_philo *philo)
 
 void	*philo_routine(void *arg)
 {
-	// TODO: when exiting thread, release all locks
 	t_philo	*philo;
 
 	philo = (t_philo *) arg;
 	philo->start_time = get_cur_time_ms();
+	if (philo->settings->n_philos == 1)
+	{
+		pthread_mutex_lock(philo->left);
+		ft_mutex_print(get_cur_time_ms() - philo->start_time, philo,
+			"has taken a fork");
+		ft_wait(philo->settings, philo->settings->time_to_eat);
+		pthread_mutex_unlock(philo->left);
+		philo->settings->dead_philo = 0;
+		ft_mutex_print(get_cur_time_ms() - philo->start_time, philo, "died");
+		return NULL;
+	}
 	while (true)
 	{
 		think(philo);
-		pickup_forks(philo->settings, philo);
-	
+		pickup_forks(philo);
 		eat(philo->settings, philo);
 		philo_sleep(philo->settings, philo);
 		if (philo->settings->simu_done)
