@@ -6,7 +6,7 @@
 #    By: lemercie <lemercie@student.hive.fi>        +#+  +:+       +#+         #
 #                                                 +#+#+#+#+#+   +#+            #
 #    Created: 2024/07/01 11:56:58 by lemercie          #+#    #+#              #
-#    Updated: 2024/12/16 15:42:42 by lemercie         ###   ########.fr        #
+#    Updated: 2024/12/16 16:58:05 by lemercie         ###   ########.fr        #
 #                                                                              #
 # **************************************************************************** #
 
@@ -19,7 +19,7 @@ OBJS	:= ${SRCS:.c=.o}
 
 all: $(NAME)
 
-%.o: %.c
+%.o: %.c philo.h
 	$(CC) $(CFLAGS) -o $@ -c $<
 
 $(NAME): $(OBJS) philo.h

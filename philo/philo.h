@@ -6,7 +6,7 @@
 /*   By: lemercie <lemercie@student.hive.fi>        +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/09/07 11:40:55 by lemercie          #+#    #+#             */
-/*   Updated: 2024/12/16 16:31:37 by lemercie         ###   ########.fr       */
+/*   Updated: 2024/12/16 16:58:22 by lemercie         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -50,7 +50,6 @@ typedef struct s_two_ptr
 }	t_two_ptr;
 
 // actions.c
-
 int			ft_wait(t_settings *settings, long long int to_wait_ms);
 void		think(t_philo *philo);
 void		eat(t_settings *settings, t_philo *philo);
