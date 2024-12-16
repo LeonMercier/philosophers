@@ -6,7 +6,7 @@
 /*   By: lemercie <lemercie@student.hive.fi>        +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/12/10 16:36:23 by lemercie          #+#    #+#             */
-/*   Updated: 2024/12/16 17:45:36 by lemercie         ###   ########.fr       */
+/*   Updated: 2024/12/16 18:02:02 by lemercie         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -90,6 +90,5 @@ void	*monitor_routine(void *arg)
 			pthread_mutex_unlock(&philos->settings->critical_region);
 			return (NULL);
 		}
-		usleep(50);
 	}
 }
