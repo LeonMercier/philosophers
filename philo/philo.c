@@ -6,7 +6,7 @@
 /*   By: lemercie <lemercie@student.hive.fi>        +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/09/07 12:22:58 by lemercie          #+#    #+#             */
-/*   Updated: 2024/12/15 18:07:54 by lemercie         ###   ########.fr       */
+/*   Updated: 2024/12/16 10:30:56 by lemercie         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -49,8 +49,7 @@ static int	validate_args(int argc, char **argv)
 	return (0);
 }
 
-// TODO: died message has to be the last thing printed
-// TODO: 5 800 200 200 is NOT allowed to die
+// NOTE: 5 800 200 200 is NOT allowed to die
 int	main(int argc, char **argv)
 {
 	t_settings settings;
@@ -59,6 +58,10 @@ int	main(int argc, char **argv)
 		return (1);
 	init_settings(&settings, argc, argv);
 	if (init(&settings))
+	{
+		pthread_mutex_destroy(&settings.critical_region);
 		return (1);
+	}
+	pthread_mutex_destroy(&settings.critical_region);
 	return (0);
 }

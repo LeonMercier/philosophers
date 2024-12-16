@@ -6,7 +6,7 @@
 /*   By: lemercie <lemercie@student.hive.fi>        +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/09/07 11:40:55 by lemercie          #+#    #+#             */
-/*   Updated: 2024/12/15 18:46:41 by lemercie         ###   ########.fr       */
+/*   Updated: 2024/12/16 10:37:39 by lemercie         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -48,6 +48,9 @@ typedef struct s_two_ptr
 	t_philo		*philos;
 }	t_two_ptr;
 
+// cleanup.c
+void	destroy_forks(pthread_mutex_t *forks, int num);
+void	join_threads(pthread_t *threads, int num);
 // common.c
 void		ft_mutex_print(long long time, t_philo *philo, char *msg);
 // init.c

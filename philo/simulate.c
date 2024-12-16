@@ -6,7 +6,7 @@
 /*   By: lemercie <lemercie@student.hive.fi>        +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/12/10 16:11:00 by lemercie          #+#    #+#             */
-/*   Updated: 2024/12/15 19:43:12 by lemercie         ###   ########.fr       */
+/*   Updated: 2024/12/16 10:39:04 by lemercie         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -128,19 +128,13 @@ void	simulate(t_philo *philos)
 		if (pthread_create(&threads[i], NULL, &philo_routine, &philos[i]) != 0)
 		{
 			printf("fail to create thread\n");
-			// join threads created so far?
-			free(threads);
+			philos->settings->simu_done = true;
+			join_threads(threads, i - 1);
 			return ;
 		}
 		i++;
 	}
 	pthread_join(monitor_thd, NULL);
-	i = 0;
-	while (i < philos->settings->n_philos)
-	{
-		pthread_join(threads[i], NULL);
-		i++;
-	}
-	free(threads);
+	join_threads(threads, philos->settings->n_philos - 1);
 	return ;
 }

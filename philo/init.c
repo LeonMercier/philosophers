@@ -6,7 +6,7 @@
 /*   By: lemercie <lemercie@student.hive.fi>        +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/09/13 11:51:57 by lemercie          #+#    #+#             */
-/*   Updated: 2024/12/15 19:39:25 by lemercie         ###   ########.fr       */
+/*   Updated: 2024/12/16 10:39:55 by lemercie         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -63,7 +63,6 @@ int	init(t_settings *settings)
 {
 	pthread_mutex_t	*forks;
 	t_philo			*philos;
-	int				i;
 
 	forks = allocate_forks(settings->n_philos);
 	if (!forks)
@@ -71,23 +70,12 @@ int	init(t_settings *settings)
 	philos = allocate_philos(settings, forks);
 	if (!philos)
 	{
-		i = 0;
-		while (i < settings->n_philos)
-		{
-			pthread_mutex_destroy(&forks[i]);
-			i++;
-		}
+		destroy_forks(forks, settings->n_philos);
 		return (1);
 	}
 	simulate(philos);
 	// free stuff because this is the end regardless of success
+	destroy_forks(forks, settings->n_philos);
 	free(philos);
-	i = 0;
-	while (i < settings->n_philos)
-	{
-		pthread_mutex_destroy(&forks[i]);
-		i++;
-	}
-	pthread_mutex_destroy(&settings->critical_region);
 	return (0);
 }
