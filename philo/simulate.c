@@ -6,7 +6,7 @@
 /*   By: lemercie <lemercie@student.hive.fi>        +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/12/10 16:11:00 by lemercie          #+#    #+#             */
-/*   Updated: 2024/12/16 11:57:11 by lemercie         ###   ########.fr       */
+/*   Updated: 2024/12/16 14:30:37 by lemercie         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -101,7 +101,6 @@ void	*philo_routine(void *arg)
 		pthread_mutex_lock(&philo->settings->critical_region);
 		philo->settings->dead_philo = 0;
 		pthread_mutex_unlock(&philo->settings->critical_region);
-		ft_mutex_print(philo, "died");
 		return NULL;
 	}
 	while (true)

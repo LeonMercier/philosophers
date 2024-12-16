@@ -6,7 +6,7 @@
 /*   By: lemercie <lemercie@student.hive.fi>        +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/09/07 11:40:55 by lemercie          #+#    #+#             */
-/*   Updated: 2024/12/16 11:35:03 by lemercie         ###   ########.fr       */
+/*   Updated: 2024/12/16 12:30:10 by lemercie         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -18,6 +18,7 @@
 # include <stdio.h> // printf()
 # include <stdbool.h> // bool type
 # include <sys/time.h> // gettimeofday()
+# include <limits.h> // INT_MAX
 
 typedef struct s_settings
 {
@@ -55,9 +56,8 @@ void	join_threads(pthread_t *threads, int num);
 void		ft_mutex_print(t_philo *philo, char *msg);
 // init.c
 int			init(t_settings *settings);
-// ft_atoi.c
-bool		is_valid_number(char *s);
-int			ft_atoi(char *s);
+// ft_atoi_safe.c
+int			ft_atoi_safe(const char *s, int *err_atoi);
 // monitor.c
 void		*monitor_routine(void *arg);
 // philo.c
