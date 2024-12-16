@@ -6,7 +6,7 @@
 /*   By: lemercie <lemercie@student.hive.fi>        +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/12/10 16:11:00 by lemercie          #+#    #+#             */
-/*   Updated: 2024/12/16 16:39:31 by lemercie         ###   ########.fr       */
+/*   Updated: 2024/12/16 16:55:50 by lemercie         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -81,7 +81,7 @@ static pthread_t	*start_philos(t_philo *philos)
 	{
 		if (pthread_create(&threads[i], NULL, &philo_routine, &philos[i]) != 0)
 		{
-			printf("fail to create thread\n");
+			printf("Error: fail to create thread\n");
 			philos->settings->simu_done = true;
 			if (i > 0)
 				join_threads(threads, i - 1);
@@ -99,7 +99,7 @@ void	simulate(t_philo *philos)
 
 	if (pthread_create(&monitor_thd, NULL, &monitor_routine, philos) != 0)
 	{
-		printf("fail to create thread\n");
+		printf("Error: fail to create thread\n");
 		return ;
 	}
 	threads = start_philos(philos);

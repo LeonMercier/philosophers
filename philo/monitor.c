@@ -6,7 +6,7 @@
 /*   By: lemercie <lemercie@student.hive.fi>        +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/12/10 16:36:23 by lemercie          #+#    #+#             */
-/*   Updated: 2024/12/16 15:05:57 by lemercie         ###   ########.fr       */
+/*   Updated: 2024/12/16 16:54:45 by lemercie         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -76,6 +76,13 @@ void	*monitor_routine(void *arg)
 	usleep(1000);
 	while (true)
 	{
+		pthread_mutex_lock(&philos->settings->critical_region);
+		if (philos->settings->simu_done == true)
+		{
+			pthread_mutex_unlock(&philos->settings->critical_region);
+			return (NULL);
+		}
+		pthread_mutex_unlock(&philos->settings->critical_region);
 		if (all_alive(philos) == false)
 		{
 			pthread_mutex_lock(&philos->settings->critical_region);
