@@ -6,7 +6,7 @@
 /*   By: lemercie <lemercie@student.hive.fi>        +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/12/10 16:11:00 by lemercie          #+#    #+#             */
-/*   Updated: 2024/12/16 14:30:37 by lemercie         ###   ########.fr       */
+/*   Updated: 2024/12/16 14:47:41 by lemercie         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -19,7 +19,6 @@ int	ft_wait(t_settings *settings, long long int to_wait_ms)
 	end_time = get_cur_time_ms() + to_wait_ms;
 	while (get_cur_time_ms() < end_time)
 	{
-		usleep(250);
 		pthread_mutex_lock(&settings->critical_region);
 		if (settings->simu_done)
 		{
@@ -27,6 +26,7 @@ int	ft_wait(t_settings *settings, long long int to_wait_ms)
 			return (1);
 		}
 		pthread_mutex_unlock(&settings->critical_region);
+		usleep(500);
 	}
 	return (0);
 }
@@ -84,6 +84,18 @@ bool	simu_done(t_settings *settings)
 	return (false);
 }
 
+void	*single_philo(t_philo *philo)
+{
+	pthread_mutex_lock(philo->left);
+	ft_mutex_print(philo, "has taken a fork");
+	ft_wait(philo->settings, philo->settings->time_to_eat);
+	pthread_mutex_unlock(philo->left);
+	pthread_mutex_lock(&philo->settings->critical_region);
+	philo->settings->dead_philo = 0;
+	pthread_mutex_unlock(&philo->settings->critical_region);
+	return NULL;
+}
+
 void	*philo_routine(void *arg)
 {
 	t_philo	*philo;
@@ -93,16 +105,9 @@ void	*philo_routine(void *arg)
 	philo->start_time = get_cur_time_ms();
 	pthread_mutex_unlock(&philo->settings->critical_region);
 	if (philo->settings->n_philos == 1)
-	{
-		pthread_mutex_lock(philo->left);
-		ft_mutex_print(philo, "has taken a fork");
-		ft_wait(philo->settings, philo->settings->time_to_eat);
-		pthread_mutex_unlock(philo->left);
-		pthread_mutex_lock(&philo->settings->critical_region);
-		philo->settings->dead_philo = 0;
-		pthread_mutex_unlock(&philo->settings->critical_region);
-		return NULL;
-	}
+		return (single_philo(philo));
+	if (philo->id % 2 == 0)
+		usleep(750);
 	while (true)
 	{
 		think(philo);
@@ -121,6 +126,8 @@ void	*philo_routine(void *arg)
 		philo_sleep(philo->settings, philo);
 		if (simu_done(philo->settings))
 			return (NULL);
+		if (philo->id % 2 == 0)
+			usleep(750);
 	}
 	return (NULL);
 }
