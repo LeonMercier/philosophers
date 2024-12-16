@@ -6,7 +6,7 @@
 /*   By: lemercie <lemercie@student.hive.fi>        +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/12/10 16:11:00 by lemercie          #+#    #+#             */
-/*   Updated: 2024/12/16 15:41:38 by lemercie         ###   ########.fr       */
+/*   Updated: 2024/12/16 16:39:31 by lemercie         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -83,7 +83,8 @@ static pthread_t	*start_philos(t_philo *philos)
 		{
 			printf("fail to create thread\n");
 			philos->settings->simu_done = true;
-			join_threads(threads, i - 1);
+			if (i > 0)
+				join_threads(threads, i - 1);
 			return (NULL);
 		}
 		i++;

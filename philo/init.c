@@ -6,7 +6,7 @@
 /*   By: lemercie <lemercie@student.hive.fi>        +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/09/13 11:51:57 by lemercie          #+#    #+#             */
-/*   Updated: 2024/12/16 15:25:20 by lemercie         ###   ########.fr       */
+/*   Updated: 2024/12/16 16:41:23 by lemercie         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -23,7 +23,12 @@ static pthread_mutex_t	*allocate_forks(int n_philos)
 	i = 0;
 	while (i < n_philos)
 	{
-		pthread_mutex_init(&forks[i], NULL);
+		if (pthread_mutex_init(&forks[i], NULL) != 0)
+		{
+			if (i > 0)
+				destroy_forks(forks, i - 1);
+			return (NULL);
+		}
 		i++;
 	}
 	return (forks);
@@ -75,12 +80,12 @@ int	init(t_settings *settings)
 	if (!philos)
 	{
 		pthread_mutex_destroy(&settings->critical_region);
-		destroy_forks(forks, settings->n_philos);
+		destroy_forks(forks, settings->n_philos - 1);
 		return (1);
 	}
 	simulate(philos);
 	pthread_mutex_destroy(&settings->critical_region);
-	destroy_forks(forks, settings->n_philos);
+	destroy_forks(forks, settings->n_philos - 1);
 	free(philos);
 	return (0);
 }
