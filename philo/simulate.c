@@ -6,7 +6,7 @@
 /*   By: lemercie <lemercie@student.hive.fi>        +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/12/10 16:11:00 by lemercie          #+#    #+#             */
-/*   Updated: 2024/12/16 11:29:25 by lemercie         ###   ########.fr       */
+/*   Updated: 2024/12/16 11:36:40 by lemercie         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -33,14 +33,12 @@ int	ft_wait(t_settings *settings, long long int to_wait_ms)
 
 void	think(t_philo *philo)
 {
-	ft_mutex_print(get_cur_time_ms() - philo->start_time, philo,
-		"is thinking");
+	ft_mutex_print(philo, "is thinking");
 }
 
 void	eat(t_settings *settings, t_philo *philo)
 {
-	ft_mutex_print(get_cur_time_ms() - philo->start_time, philo,
-				"is eating");
+	ft_mutex_print(philo, "is eating");
 	pthread_mutex_lock(&settings->critical_region);
 	philo->started_eating = get_cur_time_ms();
 	pthread_mutex_unlock(&settings->critical_region);
@@ -54,8 +52,7 @@ void	eat(t_settings *settings, t_philo *philo)
 
 void	philo_sleep(t_settings *settings, t_philo *philo)
 {
-	ft_mutex_print(get_cur_time_ms() - philo->start_time, philo,
-		"is sleeping");
+	ft_mutex_print(philo, "is sleeping");
 	ft_wait(settings, settings->time_to_sleep);
 }
 
@@ -67,14 +64,12 @@ void	pickup_forks(t_philo *philo)
 		pthread_mutex_lock(philo->left);
 	else
 		pthread_mutex_lock(philo->right);
-	ft_mutex_print(get_cur_time_ms() - philo->start_time, philo,
-		"has taken a fork");
+	ft_mutex_print(philo, "has taken a fork");
 	if (philo->id % 2 == 0)
 		pthread_mutex_lock(philo->right);
 	else
 		pthread_mutex_lock(philo->left);
-	ft_mutex_print(get_cur_time_ms() - philo->start_time, philo,
-		"has taken a fork");
+	ft_mutex_print(philo, "has taken a fork");
 }
 
 void	*philo_routine(void *arg)
@@ -88,14 +83,13 @@ void	*philo_routine(void *arg)
 	if (philo->settings->n_philos == 1)
 	{
 		pthread_mutex_lock(philo->left);
-		ft_mutex_print(get_cur_time_ms() - philo->start_time, philo,
-			"has taken a fork");
+		ft_mutex_print(philo, "has taken a fork");
 		ft_wait(philo->settings, philo->settings->time_to_eat);
 		pthread_mutex_unlock(philo->left);
 		pthread_mutex_lock(&philo->settings->critical_region);
 		philo->settings->dead_philo = 0;
 		pthread_mutex_unlock(&philo->settings->critical_region);
-		ft_mutex_print(get_cur_time_ms() - philo->start_time, philo, "died");
+		ft_mutex_print(philo, "died");
 		return NULL;
 	}
 	while (true)

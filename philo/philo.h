@@ -6,7 +6,7 @@
 /*   By: lemercie <lemercie@student.hive.fi>        +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/09/07 11:40:55 by lemercie          #+#    #+#             */
-/*   Updated: 2024/12/16 10:37:39 by lemercie         ###   ########.fr       */
+/*   Updated: 2024/12/16 11:35:03 by lemercie         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -52,7 +52,7 @@ typedef struct s_two_ptr
 void	destroy_forks(pthread_mutex_t *forks, int num);
 void	join_threads(pthread_t *threads, int num);
 // common.c
-void		ft_mutex_print(long long time, t_philo *philo, char *msg);
+void		ft_mutex_print(t_philo *philo, char *msg);
 // init.c
 int			init(t_settings *settings);
 // ft_atoi.c
