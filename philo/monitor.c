@@ -6,7 +6,7 @@
 /*   By: lemercie <lemercie@student.hive.fi>        +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/12/10 16:36:23 by lemercie          #+#    #+#             */
-/*   Updated: 2024/12/16 11:38:30 by lemercie         ###   ########.fr       */
+/*   Updated: 2024/12/16 12:04:35 by lemercie         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -27,8 +27,10 @@ static bool	all_alive(t_philo *philos)
 	i = 0;
 	while (i < philos->settings->n_philos)
 	{
+		pthread_mutex_lock(&philos->settings->critical_region);
 		if (philos[i].started_eating == -1)
 		{
+			pthread_mutex_unlock(&philos->settings->critical_region);
 			if ((get_cur_time_ms() - philos[i].start_time)
 				> philos->settings->time_to_die)
 			{
@@ -38,6 +40,7 @@ static bool	all_alive(t_philo *philos)
 		}
 		else
 		{
+			pthread_mutex_unlock(&philos->settings->critical_region);
 			if ((get_cur_time_ms() - philos[i].started_eating)
 				> philos->settings->time_to_die)
 			{
@@ -57,10 +60,13 @@ static bool	all_eaten(t_philo *philos)
 	i = 0;
 	while (i < philos->settings->n_philos)
 	{
+		pthread_mutex_lock(&philos->settings->critical_region);
 		if (philos[i].times_eaten < philos->settings->n_meals)
 		{
+			pthread_mutex_unlock(&philos->settings->critical_region);
 			return (false);
 		}
+		pthread_mutex_unlock(&philos->settings->critical_region);
 		i++;
 	}
 	return (true);
