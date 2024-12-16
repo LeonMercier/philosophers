@@ -6,7 +6,7 @@
 /*   By: lemercie <lemercie@student.hive.fi>        +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/09/07 12:22:58 by lemercie          #+#    #+#             */
-/*   Updated: 2024/12/16 15:21:24 by lemercie         ###   ########.fr       */
+/*   Updated: 2024/12/16 16:13:07 by lemercie         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -50,7 +50,6 @@ static int	validate_args(int argc)
 	return (0);
 }
 
-// NOTE: 5 800 200 200 is NOT allowed to die
 int	main(int argc, char **argv)
 {
 	t_settings	settings;

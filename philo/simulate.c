@@ -6,23 +6,11 @@
 /*   By: lemercie <lemercie@student.hive.fi>        +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/12/10 16:11:00 by lemercie          #+#    #+#             */
-/*   Updated: 2024/12/16 15:20:37 by lemercie         ###   ########.fr       */
+/*   Updated: 2024/12/16 15:41:38 by lemercie         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "philo.h"
-
-bool	simu_done(t_settings *settings)
-{
-	pthread_mutex_lock(&settings->critical_region);
-	if (settings->simu_done)
-	{
-		pthread_mutex_unlock(&settings->critical_region);
-		return (true);
-	}
-	pthread_mutex_unlock(&settings->critical_region);
-	return (false);
-}
 
 static void	*single_philo(t_philo *philo)
 {
@@ -34,6 +22,34 @@ static void	*single_philo(t_philo *philo)
 	philo->settings->dead_philo = 0;
 	pthread_mutex_unlock(&philo->settings->critical_region);
 	return (NULL);
+}
+
+static void	philo_loop(t_philo *philo)
+{
+	while (true)
+	{
+		if (simu_done(philo->settings))
+			return ;
+		think(philo);
+		if (simu_done(philo->settings))
+			return ;
+		pickup_forks(philo);
+		if (simu_done(philo->settings))
+		{
+			pthread_mutex_unlock(philo->left);
+			pthread_mutex_unlock(philo->right);
+			return ;
+		}
+		eat(philo->settings, philo);
+		if (simu_done(philo->settings))
+			return ;
+		philo_sleep(philo->settings, philo);
+		if (simu_done(philo->settings))
+			return ;
+		if (philo->id % 2 == 0)
+			usleep(750);
+	}
+	return ;
 }
 
 static void	*philo_routine(void *arg)
@@ -48,27 +64,7 @@ static void	*philo_routine(void *arg)
 		return (single_philo(philo));
 	if (philo->id % 2 == 0)
 		usleep(750);
-	while (true)
-	{
-		think(philo);
-//		if (simu_done(philo->settings))
-//			return (NULL);
-		pickup_forks(philo);
-		if (simu_done(philo->settings))
-		{
-			pthread_mutex_unlock(philo->left);
-			pthread_mutex_unlock(philo->right);
-			return (NULL);
-		}
-		eat(philo->settings, philo);
-//		if (simu_done(philo->settings))
-//			return (NULL);
-		philo_sleep(philo->settings, philo);
-//		if (simu_done(philo->settings))
-//			return (NULL);
-		if (philo->id % 2 == 0)
-			usleep(750);
-	}
+	philo_loop(philo);
 	return (NULL);
 }
 

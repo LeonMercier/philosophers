@@ -6,7 +6,7 @@
 /*   By: lemercie <lemercie@student.hive.fi>        +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/09/07 11:40:55 by lemercie          #+#    #+#             */
-/*   Updated: 2024/12/16 15:19:28 by lemercie         ###   ########.fr       */
+/*   Updated: 2024/12/16 15:41:30 by lemercie         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -60,6 +60,7 @@ void		pickup_forks(t_philo *philo);
 void		destroy_forks(pthread_mutex_t *forks, int num);
 void		join_threads(pthread_t *threads, int num);
 // common.c
+bool		simu_done(t_settings *settings);
 void		ft_mutex_print(t_philo *philo, char *msg);
 // init.c
 int			init(t_settings *settings);

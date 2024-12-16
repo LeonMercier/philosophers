@@ -6,7 +6,7 @@
 /*   By: lemercie <lemercie@student.hive.fi>        +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/09/13 11:51:57 by lemercie          #+#    #+#             */
-/*   Updated: 2024/12/16 15:01:58 by lemercie         ###   ########.fr       */
+/*   Updated: 2024/12/16 15:25:20 by lemercie         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -49,6 +49,7 @@ static t_philo	*allocate_philos(t_settings *settings, pthread_mutex_t *forks)
 			philos[i].left = &forks[i - 1];
 		philos[i].right = &forks[i];
 		philos[i].settings = settings;
+		philos[i].start_time = get_cur_time_ms();
 		i++;
 	}
 	return (philos);

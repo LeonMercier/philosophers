@@ -6,13 +6,12 @@
 #    By: lemercie <lemercie@student.hive.fi>        +#+  +:+       +#+         #
 #                                                 +#+#+#+#+#+   +#+            #
 #    Created: 2024/07/01 11:56:58 by lemercie          #+#    #+#              #
-#    Updated: 2024/12/16 15:20:02 by lemercie         ###   ########.fr        #
+#    Updated: 2024/12/16 15:42:42 by lemercie         ###   ########.fr        #
 #                                                                              #
 # **************************************************************************** #
 
 CC		:= cc
-CFLAGS	:= -g -Wextra -Wall -Werror -pthread
-#CFLAGS	:= 
+CFLAGS	:= -Wextra -Wall -Werror -pthread
 NAME	:= philo
 SRCS	:=  actions.c cleanup.c common.c ft_atoi_safe.c init.c monitor.c \
 			philo.c simulate.c time.c
