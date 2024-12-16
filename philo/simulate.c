@@ -6,7 +6,7 @@
 /*   By: lemercie <lemercie@student.hive.fi>        +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/12/10 16:11:00 by lemercie          #+#    #+#             */
-/*   Updated: 2024/12/16 10:53:10 by lemercie         ###   ########.fr       */
+/*   Updated: 2024/12/16 11:29:25 by lemercie         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -20,8 +20,13 @@ int	ft_wait(t_settings *settings, long long int to_wait_ms)
 	while (get_cur_time_ms() < end_time)
 	{
 		usleep(250);
+		pthread_mutex_lock(&settings->critical_region);
 		if (settings->simu_done)
+		{
+			pthread_mutex_unlock(&settings->critical_region);
 			return (1);
+		}
+		pthread_mutex_unlock(&settings->critical_region);
 	}
 	return (0);
 }
@@ -36,13 +41,13 @@ void	eat(t_settings *settings, t_philo *philo)
 {
 	ft_mutex_print(get_cur_time_ms() - philo->start_time, philo,
 				"is eating");
-//	pthread_mutex_lock(&settings->critical_region);
+	pthread_mutex_lock(&settings->critical_region);
 	philo->started_eating = get_cur_time_ms();
-//	pthread_mutex_unlock(&settings->critical_region);
+	pthread_mutex_unlock(&settings->critical_region);
 	ft_wait(settings, settings->time_to_eat);
-//	pthread_mutex_lock(&settings->critical_region);
+	pthread_mutex_lock(&settings->critical_region);
 	philo->times_eaten++;
-//	pthread_mutex_unlock(&settings->critical_region);
+	pthread_mutex_unlock(&settings->critical_region);
 	pthread_mutex_unlock(philo->left);
 	pthread_mutex_unlock(philo->right);
 }
@@ -77,7 +82,9 @@ void	*philo_routine(void *arg)
 	t_philo	*philo;
 
 	philo = (t_philo *) arg;
+	pthread_mutex_lock(&philo->settings->critical_region);
 	philo->start_time = get_cur_time_ms();
+	pthread_mutex_unlock(&philo->settings->critical_region);
 	if (philo->settings->n_philos == 1)
 	{
 		pthread_mutex_lock(philo->left);
@@ -85,20 +92,26 @@ void	*philo_routine(void *arg)
 			"has taken a fork");
 		ft_wait(philo->settings, philo->settings->time_to_eat);
 		pthread_mutex_unlock(philo->left);
+		pthread_mutex_lock(&philo->settings->critical_region);
 		philo->settings->dead_philo = 0;
+		pthread_mutex_unlock(&philo->settings->critical_region);
 		ft_mutex_print(get_cur_time_ms() - philo->start_time, philo, "died");
 		return NULL;
 	}
 	while (true)
 	{
 		think(philo);
+		if (philo->settings->simu_done)
+			return (NULL);
 		pickup_forks(philo);
+		if (philo->settings->simu_done)
+			return (NULL);
 		eat(philo->settings, philo);
+		if (philo->settings->simu_done)
+			return (NULL);
 		philo_sleep(philo->settings, philo);
 		if (philo->settings->simu_done)
-		{
 			return (NULL);
-		}
 	}
 	return (NULL);
 }

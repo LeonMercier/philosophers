@@ -6,7 +6,7 @@
 /*   By: lemercie <lemercie@student.hive.fi>        +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/12/10 16:36:23 by lemercie          #+#    #+#             */
-/*   Updated: 2024/12/16 10:47:38 by lemercie         ###   ########.fr       */
+/*   Updated: 2024/12/16 11:22:14 by lemercie         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -77,12 +77,16 @@ void	*monitor_routine(void *arg)
 	{
 		if (all_alive(philos) == false)
 		{
+			pthread_mutex_lock(&philos->settings->critical_region);
 			philos->settings->simu_done = true;
+			pthread_mutex_unlock(&philos->settings->critical_region);
 			return (NULL);
 		}
 		if (philos->settings->n_meals > -1 && all_eaten(philos))
 		{
+			pthread_mutex_lock(&philos->settings->critical_region);
 			philos->settings->simu_done = true;
+			pthread_mutex_unlock(&philos->settings->critical_region);
 			return (NULL);
 		}
 	}
