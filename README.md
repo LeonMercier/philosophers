@@ -19,6 +19,7 @@ Takes the following arguments on he command line:
 * Time (in ms) that philosophers will take to sleep after having eaten
 * (Optional) Number of meals that philosophers need to eat before the simulation ends. 
 
+<!-- bullet, be-gone -->
 
     `./philo NUMBER_OF_PHILOSOPHERS TIME_TO_DIE TIME_TO_EAT TIME_TO_SLEEP [NUMBER_OF_MEALS]`
 
