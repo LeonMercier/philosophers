@@ -20,8 +20,14 @@ Takes the following arguments on he command line:
 * (Optional) Number of meals that philosophers need to eat before the simulation ends. 
 
 <!-- bullet, be-gone -->
+Like this: 
 
     `./philo NUMBER_OF_PHILOSOPHERS TIME_TO_DIE TIME_TO_EAT TIME_TO_SLEEP [NUMBER_OF_MEALS]`
+
+### Examples
+
+    ./philo 5 800 200 200
+    ./philo 100 900 300 200 7
 
 
 
