@@ -2,7 +2,7 @@
 A simulation of the [Dining philosphers problem](https://en.wikipedia.org/wiki/Dining_philosophers_problem)
 
 ## Description
-A C program that uses threads to represent philosphers and mutexes to represent forks. The problem can be simulated with user-supplied timings. 
+A C program for the Linux command line. Uses pthreads to represent philosophers and mutexes to represent forks. Simulates the problem with user-supplied timings. 
 
 ## Installation
 Clone this repository and run
