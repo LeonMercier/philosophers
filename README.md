@@ -1,4 +1,4 @@
-# Philosophers
+# SpaghettiDinner
 A simulation of the [Dining philosphers problem](https://en.wikipedia.org/wiki/Dining_philosophers_problem)
 
 ## Description
